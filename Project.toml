@@ -1,0 +1,15 @@
+name = "MPAlign"
+uuid = "c7721656-2a73-46d8-96d5-fb28b16cc1ec"
+authors = ["Marc Lelarge <marc.lelarge@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+
+[compat]
+julia = "^1"

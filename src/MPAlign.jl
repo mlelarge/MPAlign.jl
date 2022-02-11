@@ -1,0 +1,3 @@
+module MPAlign
+
+end # module
