@@ -23,5 +23,7 @@ jobs:
         uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
+      - name: Pkg instantiate
+        run julia -e "using Pkg; Pkg.instantiate()"
       - name: Run tests
         run: julia --project test/runtests.jl
