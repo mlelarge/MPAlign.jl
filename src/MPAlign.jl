@@ -1,7 +1,6 @@
 module MPAlign
 using Serialization
 using Statistics
-using Plots
 using BenchmarkTools
 using LambertW
 using LightGraphs
