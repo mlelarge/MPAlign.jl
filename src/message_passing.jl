@@ -1,6 +1,3 @@
-#include("ER_graphs.jl")
-#include("utils.jl")
-#using LoopVectorization
 using Combinatorics
 using Serialization
 
@@ -8,24 +5,6 @@ function init_mp(PG::Pair_ER)
     zeros(2*ne(PG.N1.G),2*ne(PG.N2.G))
 end
 
-#= function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,mp_previous::Array{Float64,2})
-    if  k == 0
-        return Float64(1)
-    end
-    # to do precalcul des facteurs combinatoires combinations et permutations
-    σ1 = combinations(neig_i1,k)
-    σ2 = combinations(neig_i2,k)
-    sum_inj = Float64(0)
-    for s1 in σ1
-        for s2 in σ2
-            for ps2 in permutations(s2)
-                sum_inj += prod(mp_previous[s1[j],ps2[j]] for j in 1:k)
-            end
-        end
-    end
-    sum_inj
-end
- =#
 
 function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     mp_previous::Array{Float64,2},gen_i1::Vector{Vector{Int64}},gen_i2::Vector{Vector{Int64}},perm_k::Vector{Vector{Int64}})
@@ -43,20 +22,6 @@ function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     sum_inj
 end
 
-#= function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2})
-    # trees T_1(e1) and T_2(e2)
-    d1 = PG.N1.deg[e1]
-    d2 = PG.N2.deg[e2]
-    deg_min = min(d1,d2)
-    if deg_min == 1
-        output = psi(PG,0,d1-1,d2-1)
-    else
-        neig_i1 = PG.N1.neig[e1]
-        neig_i2 = PG.N2.neig[e2]
-        output = sum((psi(PG,k,d1-1,d2-1) * sum_combi(neig_i1,neig_i2,k,mp_previous)) for k in 0:(deg_min-1))
-    end
-    output
-end =#
 
 function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2})
     # trees T_1(e1) and T_2(e2)
@@ -89,14 +54,6 @@ end
     nothing
 end
 
-#= @inline function compute_next!(PG::Pair_ER,mp_previous::Array{Float64,2},mp_next::Array{Float64,2},ne1::Int64,ne2::Int64)
-    @inbounds for e1 in 1:ne1
-        @inbounds for e2 in 1:ne2
-            mp_next[e1,e2] = m_passing(PG,e1,e2,mp_previous)
-        end    
-    end
-    nothing
-end =#
 
 function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
     if mp_previous === nothing
@@ -113,7 +70,6 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
         compute_next!(PG,mp_previous,mp_next,ne1,ne2)
         (mp_previous, mp_next) = (mp_next, mp_previous)
         M_loglr = create_matrix_lr(PG,mp_previous)
-        #M_loglr = log.(M_lr)
         ov1, ov2, v1,v2 = eval_M(PG, M_loglr)
         m1,m2 = eval_edges(PG, M_loglr)
         new_perf = (m1+m2)/2
