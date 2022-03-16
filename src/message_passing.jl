@@ -5,10 +5,10 @@ using Combinatorics
 using Serialization
 
 function init_mp(PG::Pair_ER)
-    ones(2*ne(PG.N1.G),2*ne(PG.N2.G))
+    zeros(2*ne(PG.N1.G),2*ne(PG.N2.G))
 end
 
-function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,mp_previous::Array{Float64,2})
+#= function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,mp_previous::Array{Float64,2})
     if  k == 0
         return Float64(1)
     end
@@ -25,6 +25,7 @@ function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,mp_p
     end
     sum_inj
 end
+ =#
 
 function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     mp_previous::Array{Float64,2},gen_i1::Vector{Vector{Int64}},gen_i2::Vector{Vector{Int64}},perm_k::Vector{Vector{Int64}})
@@ -35,14 +36,14 @@ function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     for s1 in gen_i1
         for s2 in gen_i2
             for ps2 in perm_k
-                sum_inj += prod(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]] for j in 1:k)
+                sum_inj = log_sum_exp(sum_inj, sum(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]] for j in 1:k))
             end
         end
     end
     sum_inj
 end
 
-function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2})
+#= function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2})
     # trees T_1(e1) and T_2(e2)
     d1 = PG.N1.deg[e1]
     d2 = PG.N2.deg[e2]
@@ -55,11 +56,12 @@ function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2}
         output = sum((psi(PG,k,d1-1,d2-1) * sum_combi(neig_i1,neig_i2,k,mp_previous)) for k in 0:(deg_min-1))
     end
     output
-end
+end =#
 
-function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2},
-    dic_comb::Dict{Tuple{Int64, Int64}, Vector{Vector{Int64}}}, dic_perm::Dict{Int64, Vector{Vector{Int64}}})
+function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2})
     # trees T_1(e1) and T_2(e2)
+    dic_comb = PG.dic_comb
+    dic_perm = PG.dic_perm
     d1 = PG.N1.deg[e1]
     d2 = PG.N2.deg[e2]
     deg_min = min(d1,d2)
@@ -68,22 +70,14 @@ function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2}
     else
         neig_i1 = PG.N1.neig[e1]
         neig_i2 = PG.N2.neig[e2]
-        output = Float64(0)
-        for k in 0:(deg_min-1)
+        gen_i1,gen_i2,perm_k = dic_comb[(d1-1,0)], dic_comb[(d2-1,0)], dic_perm[0]
+        output = psi_log(PG,0,d1-1,d2-1) + sum_combi(neig_i1,neig_i2,0,mp_previous, gen_i1, gen_i2, perm_k)#Float64(0)
+        for k in 1:(deg_min-1)
             gen_i1,gen_i2,perm_k = dic_comb[(d1-1,k)], dic_comb[(d2-1,k)], dic_perm[k]
-            output += psi(PG,k,d1-1,d2-1) * sum_combi(neig_i1,neig_i2,k,mp_previous, gen_i1, gen_i2, perm_k)
+            output = log_sum_exp(output, psi_log(PG,k,d1-1,d2-1) + sum_combi(neig_i1,neig_i2,k,mp_previous, gen_i1, gen_i2, perm_k))
         end
     end
     output
-end
-
-@inline function compute_next!(PG::Pair_ER,mp_previous::Array{Float64,2},mp_next::Array{Float64,2},ne1::Int64,ne2::Int64,dic_comb::Dict{Tuple{Int64, Int64}, Vector{Vector{Int64}}}, dic_perm::Dict{Int64, Vector{Vector{Int64}}})
-    @inbounds for e1 in 1:ne1
-        @inbounds for e2 in 1:ne2
-            mp_next[e1,e2] = m_passing(PG,e1,e2,mp_previous,dic_comb,dic_perm)
-        end    
-    end
-    nothing
 end
 
 @inline function compute_next!(PG::Pair_ER,mp_previous::Array{Float64,2},mp_next::Array{Float64,2},ne1::Int64,ne2::Int64)
@@ -95,14 +89,16 @@ end
     nothing
 end
 
-function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
-    deg1 = unique(sort(PG.N1.deg))
-    deg2 = unique(sort(PG.N2.deg))
-    min_deg = min(deg1[end],deg2[end])
-    max_deg = max(deg1[end],deg2[end])
+#= @inline function compute_next!(PG::Pair_ER,mp_previous::Array{Float64,2},mp_next::Array{Float64,2},ne1::Int64,ne2::Int64)
+    @inbounds for e1 in 1:ne1
+        @inbounds for e2 in 1:ne2
+            mp_next[e1,e2] = m_passing(PG,e1,e2,mp_previous)
+        end    
+    end
+    nothing
+end =#
 
-    dic_comb = Dict([((d,k),collect(combinations(range(1,d),k))) for d in 1:max_deg-1 for k in 0:d])
-    dic_perm = Dict([(k,collect(permutations(range(1,k)))) for k in 0:min_deg-1])
+function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
     if mp_previous === nothing
         mp_previous = init_mp(PG)
     end
@@ -114,10 +110,10 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
     last_iter = 0
     ov_opt = 0
     for i in 1:n_iter
-        compute_next!(PG,mp_previous,mp_next,ne1,ne2,dic_comb,dic_perm)
+        compute_next!(PG,mp_previous,mp_next,ne1,ne2)
         (mp_previous, mp_next) = (mp_next, mp_previous)
-        M_lr = create_matrix_lr(PG,mp_previous)
-        M_loglr = log.(M_lr)
+        M_loglr = create_matrix_lr(PG,mp_previous)
+        #M_loglr = log.(M_lr)
         ov1, ov2, v1,v2 = eval_M(PG, M_loglr)
         m1,m2 = eval_edges(PG, M_loglr)
         new_perf = (m1+m2)/2
@@ -144,9 +140,14 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
 end
 
 function lr_root(PG::Pair_ER,mp,d1,d2,neig_i1,neig_i2)
-    sum = Float64(0)
-    for k in 0:min(d1,d2)
-        sum += psi(PG,k,d1,d2) * sum_combi(neig_i1,neig_i2,k,mp)
+    dic_comb = PG.dic_comb
+    dic_perm = PG.dic_perm
+    deg_min = min(d1,d2)
+    gen_i1,gen_i2,perm_k = dic_comb[(d1,0)], dic_comb[(d2,0)], dic_perm[0]
+    sum = psi_log(PG,0,d1,d2) + sum_combi(neig_i1,neig_i2,0,mp, gen_i1, gen_i2, perm_k)
+    for k in 1:deg_min
+        gen_i1,gen_i2,perm_k = dic_comb[(d1,k)], dic_comb[(d2,k)], dic_perm[k]
+        sum = log_sum_exp(sum, psi_log(PG,k,d1,d2) + sum_combi(neig_i1,neig_i2,k,mp, gen_i1, gen_i2, perm_k))
     end
     sum
 end
