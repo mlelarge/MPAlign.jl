@@ -6,6 +6,10 @@ using Memoize
     exp(PG.λ*PG.s)*PG.s^k*(1-PG.s)^(d1+d2-2*k)/(PG.λ^k)
 end
 
+@memoize function psi_log(PG::Pair_ER,k,d1,d2)
+    PG.λ*PG.s+log(PG.s^k*(1-PG.s)^(d1+d2-2*k)/(PG.λ^k))
+end
+
 @memoize function psi(λ,s,k,d1,d2)
     exp(λ*s)*s^k*(1-s)^(d1+d2-2*k)/(λ^k)
 end
@@ -53,4 +57,12 @@ function eval_edges(PG,M)
     map1 = [c[2] for c in max_index2]
     map2 = [c[1] for c in max_index1]
     match_edges(PG,map1,map2)
+end
+
+function log_sum_exp(a::Float64, b::Float64)
+    if a > b
+        return a + log1p(exp(b-a))
+    else
+        return b + log1p(exp(a-b))
+    end
 end

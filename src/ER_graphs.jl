@@ -135,6 +135,8 @@ struct Pair_ER
     perm_G1G2::Array{Int64,1}
     perm_G2G1::Array{Int64,1}
     edge_G1G2::Array{Int64,2}
+    dic_comb::Dict{Tuple{Int64, Int64}, Vector{Vector{Int64}}}
+    dic_perm::Dict{Int64, Vector{Vector{Int64}}}
 end
 
 """
@@ -190,7 +192,14 @@ function Pair_ER(n,λ,s)
         #println(i,e)
         edge_G1G2[i,:] = [dic_G1[(perm_GinterG1[e[1]],perm_GinterG1[e[2]])], dic_G2[(perm_GinterG2[e[1]],perm_GinterG2[e[2]])]]
     end
-    return Pair_ER(N1,N2,GGinter,n,λ,s,perm_G1G2,perm_G2G1,edge_G1G2)
+    deg1 = unique(sort(N1.deg))
+    deg2 = unique(sort(N2.deg))
+    min_deg = min(deg1[end],deg2[end])
+    max_deg = max(deg1[end],deg2[end])
+
+    dic_comb = Dict([((d,k),collect(combinations(range(1,d),k))) for d in 0:max_deg for k in 0:d])
+    dic_perm = Dict([(k,collect(permutations(range(1,k)))) for k in 0:min_deg])
+    return Pair_ER(N1,N2,GGinter,n,λ,s,perm_G1G2,perm_G2G1,edge_G1G2,dic_comb,dic_perm)
 end
 
 
