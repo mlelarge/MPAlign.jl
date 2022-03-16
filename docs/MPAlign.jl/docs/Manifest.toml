@@ -5,12 +5,45 @@ git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
 uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
 version = "0.0.1"
 
+[[ArnoldiMethod]]
+deps = ["LinearAlgebra", "Random", "StaticArrays"]
+git-tree-sha1 = "f87e559f87a45bece9c9ed97458d3afe98b1ebb9"
+uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
+version = "0.1.0"
+
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
+
+[[BenchmarkTools]]
+deps = ["JSON", "Logging", "Printf", "Profile", "Statistics", "UUIDs"]
+git-tree-sha1 = "4c10eee4af024676200bc7752e536f858c6b8f93"
+uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+version = "1.3.1"
+
+[[Combinatorics]]
+git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
+uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+version = "1.0.2"
+
+[[Compat]]
+deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
+git-tree-sha1 = "96b0bc6c52df76506efc8a441c6cf1adcb1babc4"
+uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
+version = "3.42.0"
+
+[[DataStructures]]
+deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
+git-tree-sha1 = "3daef5523dd2e769dad2365274f760ff5f282c7d"
+uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+version = "0.18.11"
 
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[DelimitedFiles]]
+deps = ["Mmap"]
+uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
 [[Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -24,9 +57,9 @@ version = "0.8.6"
 
 [[Documenter]]
 deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "75c6cf9d99e0efc79b724f5566726ad3ad010a01"
+git-tree-sha1 = "cd0eb78e9b4202891ac61e74ca84402d01bafeba"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.27.12"
+version = "0.27.14"
 
 [[IOCapture]]
 deps = ["Logging", "Random"]
@@ -34,44 +67,92 @@ git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.2"
 
+[[Inflate]]
+git-tree-sha1 = "f5fc07d4e706b84f72d54eedcc1c13d92fb0871c"
+uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
+version = "0.1.2"
+
 [[InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
-git-tree-sha1 = "8076680b162ada2a031f707ac7b4953e30667a37"
+git-tree-sha1 = "3c837543ddb02250ef42f4738347454f95079d4e"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "0.21.2"
+version = "0.21.3"
+
+[[LambertW]]
+git-tree-sha1 = "2d9f4009c486ef676646bca06419ac02061c088e"
+uuid = "984bce1d-4616-540c-a9ee-88d1112d94c9"
+version = "0.4.5"
 
 [[LibGit2]]
-deps = ["Printf"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+
+[[Libdl]]
+uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[[LightGraphs]]
+deps = ["ArnoldiMethod", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
+git-tree-sha1 = "432428df5f360964040ed60418dd5601ecd240b6"
+uuid = "093fc24a-ae57-5d10-9952-331d41423f4d"
+version = "1.3.5"
+
+[[LinearAlgebra]]
+deps = ["Libdl"]
+uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[MPAlign]]
+deps = ["BenchmarkTools", "Combinatorics", "LambertW", "LightGraphs", "LinearAlgebra", "Memoize", "Serialization", "Statistics"]
 path = "../../.."
 uuid = "c7721656-2a73-46d8-96d5-fb28b16cc1ec"
 version = "0.1.0"
+
+[[MacroTools]]
+deps = ["Markdown", "Random"]
+git-tree-sha1 = "3d3e902b31198a27340d0bf00d6ac452866021cf"
+uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+version = "0.5.9"
 
 [[Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
+[[Memoize]]
+deps = ["MacroTools"]
+git-tree-sha1 = "2b1dfcba103de714d31c033b5dacc2e4a12c7caa"
+uuid = "c03570c3-d221-55d1-a50c-7939bbd78826"
+version = "0.4.4"
+
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
+[[OrderedCollections]]
+git-tree-sha1 = "85f8e6578bf1f9ee0d11e7bb1b1456435479d47c"
+uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+version = "1.4.1"
+
 [[Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "13468f237353112a01b2d6b32f3d0f80219944aa"
+git-tree-sha1 = "85b5da0fa43588c75bb1ff986493443f821c70b7"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.2.2"
+version = "2.2.3"
+
+[[Pkg]]
+deps = ["Dates", "LibGit2", "Markdown", "Printf", "REPL", "Random", "SHA", "UUIDs"]
+uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+
+[[Profile]]
+deps = ["Printf"]
+uuid = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
 
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets"]
@@ -81,15 +162,46 @@ uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 deps = ["Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
+[[SHA]]
+uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+
 [[Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+
+[[SharedArrays]]
+deps = ["Distributed", "Mmap", "Random", "Serialization"]
+uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+
+[[SimpleTraits]]
+deps = ["InteractiveUtils", "MacroTools"]
+git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
+uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
+version = "0.9.4"
 
 [[Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
+[[SparseArrays]]
+deps = ["LinearAlgebra", "Random"]
+uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[StaticArrays]]
+deps = ["LinearAlgebra", "Random", "Statistics"]
+git-tree-sha1 = "74eaf352c0cef1e32ce7394bcc359d9199a28cf7"
+uuid = "90137ffa-7385-5640-81b9-e52037218182"
+version = "1.3.6"
+
+[[Statistics]]
+deps = ["LinearAlgebra", "SparseArrays"]
+uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
 [[Test]]
 deps = ["Distributed", "InteractiveUtils", "Logging", "Random"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[[UUIDs]]
+deps = ["Random", "SHA"]
+uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
