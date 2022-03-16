@@ -52,7 +52,7 @@ using LinearAlgebra
     [-2.375779, 0.689174, -0.843302, 0.178349, 0.178349, -0.843302, -0.332477, 1.200000, 0.178349, -0.332477, -0.843302, 0.178349, 0.689174, 0.178349, -0.332477, 1.200000, 0.178349, -0.843302, 1.200000, 1.200000]
     ]
 
-    G1, G2 = read_graphs(n,"./test/graphs_20.txt")
+    G1, G2 = read_graphs(n,"graphs_20.txt")
     PG = Pair_IO(G1,G2,n,λ,s)
     M_data = create_matrix_check(data_check2)
     @testset "message passing" begin
