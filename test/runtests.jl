@@ -77,11 +77,12 @@ using LinearAlgebra
     m1, m2 = match_edges(PG,PG.perm_G1G2,PG.perm_G2G1)
     @test m1 == m2
     @test m1 == ne(PG.Ginter)
-    
+    @testset "parameter computation" begin
     delta = 0
     for t in 0:0.1:1
         a,b = MPAlign.compute_ab(n,λ,t)
         delta += (a+(1-a)*b^2 - λ*s/n)^2+((1-a)*b*(1-b) - λ*(1-s)/n)^2
     end
     @test delta < 0.01
+    end
 end

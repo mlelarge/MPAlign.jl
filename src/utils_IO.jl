@@ -56,7 +56,6 @@ function check_data(PG,M_data,n_iter)
     n,_ = size(M_data)
     mp_fin = run_bp(PG,n_iter)
     M_loglr = create_matrix_lr(PG,mp_fin)
-    #M_loglr = log.(M_lr)
     check = true
     for i in 1:n
         for j in 1:n

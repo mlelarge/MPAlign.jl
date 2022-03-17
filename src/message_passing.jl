@@ -9,17 +9,17 @@ end
 function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     mp_previous::Array{Float64,2},gen_i1::Vector{Vector{Int64}},gen_i2::Vector{Vector{Int64}},perm_k::Vector{Vector{Int64}})
     if  k == 0
-        return Float64(1)
+        return Float64(0)
     end
     sum_inj = Float64(0)
     for s1 in gen_i1
         for s2 in gen_i2
             for ps2 in perm_k
-                sum_inj = log_sum_exp(sum_inj, sum(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]] for j in 1:k))
+                sum_inj += prod(exp(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]]) for j in 1:k)
             end
         end
     end
-    sum_inj
+    log(sum_inj)
 end
 
 
@@ -31,7 +31,7 @@ function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2}
     d2 = PG.N2.deg[e2]
     deg_min = min(d1,d2)
     if deg_min == 1
-        output = psi(PG,0,d1-1,d2-1)
+        output = psi_log(PG,0,d1-1,d2-1)
     else
         neig_i1 = PG.N1.neig[e1]
         neig_i2 = PG.N2.neig[e2]
@@ -70,12 +70,13 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
         compute_next!(PG,mp_previous,mp_next,ne1,ne2)
         (mp_previous, mp_next) = (mp_next, mp_previous)
         M_loglr = create_matrix_lr(PG,mp_previous)
+        #M_loglr = log.(M_loglr)
         ov1, ov2, v1,v2 = eval_M(PG, M_loglr)
         m1,m2 = eval_edges(PG, M_loglr)
         new_perf = (m1+m2)/2
         if new_perf > perf
             perf = new_perf
-            mp_opt = mp_previous
+            mp_opt = deepcopy(mp_previous)
             last_iter = i
             ov_opt = (ov1+ov2)/2
         end
@@ -92,7 +93,7 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
             break
         end
     end
-    mp_previous#res, mp_opt, last_iter, perf, ov_opt/PG.n
+    mp_opt#res, mp_opt, last_iter, perf, ov_opt/PG.n
 end
 
 function lr_root(PG::Pair_ER,mp,d1,d2,neig_i1,neig_i2)
