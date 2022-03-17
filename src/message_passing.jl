@@ -89,7 +89,7 @@ function run_bp(PG::Pair_ER,n_iter::Int64;mp_previous=nothing,verbose=false)
         if verbose
             println(i, " | ", m1, " | ", m2, " | " ,ov1," | ",ov2, " | ", v1, " | ", v2)
         end
-        if max(v1,v2) == Inf
+        if isnan(v1) || isnan(v2)
             break
         end
     end
