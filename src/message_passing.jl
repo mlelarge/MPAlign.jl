@@ -11,15 +11,17 @@ function sum_combi(neig_i1::Array{Int64,1},neig_i2::Array{Int64,1},k::Int64,
     if  k == 0
         return Float64(0)
     end
-    sum_inj = Float64(0)
+    sum_inj = -Inf#Float64(0)
     for s1 in gen_i1
         for s2 in gen_i2
             for ps2 in perm_k
-                sum_inj += prod(exp(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]]) for j in 1:k)
+                sum_inj = log_sum_exp(sum_inj, sum(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]] for j in 1:k))
+                #sum_inj += prod(exp(mp_previous[neig_i1[s1[j]],neig_i2[s2[ps2[j]]]]) for j in 1:k)
             end
         end
     end
-    log(sum_inj)
+    sum_inj
+    #log(sum_inj)
 end
 
 
@@ -35,9 +37,9 @@ function m_passing(PG::Pair_ER,e1::Int64,e2::Int64,mp_previous::Array{Float64,2}
     else
         neig_i1 = PG.N1.neig[e1]
         neig_i2 = PG.N2.neig[e2]
-        gen_i1,gen_i2,perm_k = dic_comb[(d1-1,0)], dic_comb[(d2-1,0)], dic_perm[0]
-        output = psi_log(PG,0,d1-1,d2-1) + sum_combi(neig_i1,neig_i2,0,mp_previous, gen_i1, gen_i2, perm_k)#Float64(0)
-        for k in 1:(deg_min-1)
+        #gen_i1,gen_i2,perm_k = dic_comb[(d1-1,0)], dic_comb[(d2-1,0)], dic_perm[0]
+        output = -Inf#psi_log(PG,0,d1-1,d2-1) + sum_combi(neig_i1,neig_i2,0,mp_previous, gen_i1, gen_i2, perm_k)#Float64(0)
+        for k in 0:(deg_min-1)
             gen_i1,gen_i2,perm_k = dic_comb[(d1-1,k)], dic_comb[(d2-1,k)], dic_perm[k]
             output = log_sum_exp(output, psi_log(PG,k,d1-1,d2-1) + sum_combi(neig_i1,neig_i2,k,mp_previous, gen_i1, gen_i2, perm_k))
         end
